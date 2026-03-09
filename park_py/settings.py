@@ -91,12 +91,49 @@ WSGI_APPLICATION = 'park_py.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Database 설정 (MariaDB 연결)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': {},  # 기본 DB는 비워두거나 command DB를 할당합니다.
+    'command_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'parking_command_db',
+        'USER': 'username123',
+        'PASSWORD': 'password123', # Secret에서 설정한 비밀번호
+        'HOST': 'parking-db-command-service', # K8s 서비스 명
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    },
+    'query_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'parking_query_db',
+        'USER': 'username123',
+        'PASSWORD': 'password123',
+        'HOST': 'parking-db-query-service',
+        'PORT': '3306',
+    },
+    'vehicle_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'parking_vehicle_db',
+        'USER': 'username123',
+        'PASSWORD': 'password123',
+        'HOST': 'parking-db-vehicle-service',
+        'PORT': '3306',
+    },
+    'zone_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'parking_zone_db',
+        'USER': 'username123',
+        'PASSWORD': 'password123',
+        'HOST': 'parking-db-zone-service',
+        'PORT': '3306',
+    },
 }
+
+# 멀티 DB 라우터 등록
+DATABASE_ROUTERS = ['park_py.db_router.MultiServiceRouter']
 
 
 # Password validation
